@@ -1,0 +1,56 @@
+---
+- name: Set up workstation
+  hosts: localhost
+  become: true
+  tasks:
+
+   - name: Install dev related packages
+     ansible.builtin.package:
+      state: present
+      name:
+       - git
+       - golang
+
+   - name: Standard utilities
+     ansible.builtin.package:
+      state: present
+      name:
+       - kitty
+       - stow
+       - starship
+       - tealdeer
+       - neovim
+       - fzf
+
+- name: Flatpak Packages Setup
+  hosts: localhost
+  become: true
+  tasks:
+
+    - name: Package installs
+      ansible.builtin.package:
+       name:
+        - flatpak
+        - plasma-discover-backend-flatpak
+       state: present
+
+- name: Flatpak User Setup
+  hosts: localhost
+  become: false
+  tasks:
+
+    - name: Flathub repo setup for local user
+      community.general.flatpak_remote:
+        name: flathub
+        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        state: present
+        method: user
+
+    - name: Install Flatpak packages from Flathub in the current user profile
+      community.general.flatpak:
+        state: present
+        remote: flathub
+        method: user
+        name:
+          - it.mijorus.gearlever
+          - org.gnome.World.PikaBackup
