@@ -24,13 +24,15 @@
      ansible.builtin.apt:
       state: present
       name:
+       - tree-sitter-cli
+       - ripgrep
+       - fd-find
        - wireguard-tools
        - wl-clipboard
        - kitty
        - stow
        - starship
        - tealdeer
-       - neovim
        - fzf
        - keychain
        - micro
@@ -106,3 +108,17 @@
        name: incus-client
        state: present
        update_cache: true
+
+- name: Install Backrest backup tool
+  hosts: localhost
+  become: false
+  tags:
+    - backrest
+    - restic
+  tasks:
+
+    - name: Download archive to temp dir
+      ansible.builtin.get_url:
+        url: https://github.com/garethgeorge/backrest/releases/download/v1.12.1/backrest_Linux_x86_64.tar.gz
+        dest: /tmp/backrest_Linux_x86_64.tar.gz
+        checksum: sha256:283dee27d268f3a71b34dbc5a42526e62e5b930a816e365e826a8febd7d88fd5
