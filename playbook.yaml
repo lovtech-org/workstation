@@ -10,6 +10,7 @@
      ansible.builtin.apt:
        update_cache: true
      when: ansible_facts['os_family'] == "Debian"
+     changed_when: false
 
    - name: Install dev related packages
      ansible.builtin.package:
@@ -23,6 +24,7 @@
      ansible.builtin.apt:
       state: present
       name:
+       - wireguard-tools
        - wl-clipboard
        - kitty
        - stow
