@@ -2,13 +2,14 @@
 - name: Install packages
   hosts: localhost
   become: true
+  tags: packages
   gather_facts: true
   tasks:
 
    - name: Update apt cache
      ansible.builtin.apt:
        update_cache: true
-     when: ansible_facts['ansible_os_family'] == "Debian"
+     when: ansible_facts['os_family'] == "Debian"
 
    - name: Install dev related packages
      ansible.builtin.package:
@@ -22,6 +23,7 @@
      ansible.builtin.apt:
       state: present
       name:
+       - wl-clipboard
        - kitty
        - stow
        - starship
