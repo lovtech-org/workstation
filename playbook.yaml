@@ -1,8 +1,14 @@
 ---
-- name: Set up workstation
+- name: Install packages
   hosts: localhost
   become: true
+  gather_facts: true
   tasks:
+
+   - name: Update apt cache
+     ansible.builtin.apt:
+       update_cache: true
+     when: ansible_facts['ansible_os_family'] == "Debian"
 
    - name: Install dev related packages
      ansible.builtin.package:
@@ -10,9 +16,10 @@
       name:
        - git
        - golang
+       - lazygit
 
    - name: Standard utilities
-     ansible.builtin.package:
+     ansible.builtin.apt:
       state: present
       name:
        - kitty
@@ -21,10 +28,20 @@
        - tealdeer
        - neovim
        - fzf
+       - keychain
+       - micro
+
+   - name: Remove any packages that we'd rather have flatpaks of
+     ansible.builtin.package:
+      state: absent
+      name:
+       - kate
 
 - name: Flatpak Packages Setup
   hosts: localhost
   become: true
+  gather_facts: false
+  tags: flatpak
   tasks:
 
     - name: Package installs
@@ -37,6 +54,8 @@
 - name: Flatpak User Setup
   hosts: localhost
   become: false
+  tags: flatpak
+  gather_facts: false
   tasks:
 
     - name: Flathub repo setup for local user
@@ -54,3 +73,32 @@
         name:
           - it.mijorus.gearlever
           - org.gnome.World.PikaBackup
+          - org.kde.kate
+
+- name: Incus Client Setup
+  hosts: localhost
+  become: true
+  tags: incus
+  gather_facts: true
+  tasks:
+   
+   - name: Install python3-debian
+     ansible.builtin.apt:
+       name: python3-debian
+       update_cache: true
+       state: present
+
+   - name: Add Deb822 Repo
+     ansible.builtin.deb822_repository:
+       name: zabbly-incus-stable
+       types: deb
+       uris: https://pkgs.zabbly.com/incus/stable
+       suites: '{{ ansible_distribution_release }}'
+       components: main
+       signed_by: https://pkgs.zabbly.com/key.asc
+
+   - name: Install Incus client
+     ansible.builtin.apt:
+       name: incus-client
+       state: present
+       update_cache: true
