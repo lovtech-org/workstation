@@ -36,6 +36,7 @@
        - fzf
        - keychain
        - micro
+       - tree
 
    - name: Remove any packages that we'd rather have flatpaks of
      ansible.builtin.package:
