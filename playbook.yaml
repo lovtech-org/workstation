@@ -79,14 +79,15 @@
 
     - name: Install Flatpak packages from Flathub in the current user profile
       community.general.flatpak:
-        state: present
-        remote: flathub
-        method: user
-        name:
-          - it.mijorus.gearlever
-          - org.gnome.World.PikaBackup
-          - org.kde.kate
-          - io.podman_desktop.PodmanDesktop
+       state: present
+       remote: flathub
+       method: user
+       name:
+        - it.mijorus.gearlever
+        - org.gnome.World.PikaBackup
+        - org.kde.kate
+        - io.podman_desktop.PodmanDesktop
+        - md.obsidian.Obsidian
 
 - name: Incus Client Setup
   hosts: localhost
