@@ -118,3 +118,23 @@
        state: present
        update_cache: true
 
+- name: OpenTofu Setup
+  hosts: localhost
+  become: false
+  tags: opentofu, terraform
+  gather_facts: true
+  tasks:
+
+   - name: Download OpenTofu archive
+     ansible.builtin.get_url:
+      checksum: sha256:dc0ad16a42b3bfb5f3ceff3dcd5e9cd4c55271fae9f4bfe611749ff8ae6ec23c
+      dest: $HOME/Downloads
+      url: https://github.com/opentofu/opentofu/releases/download/v1.12.2/tofu_1.12.2_linux_amd64.zip
+
+   - name: Unpack OpenTofu binary
+     ansible.builtin.unarchive:
+      remote_src: true
+      mode: u=rwx,go=rx
+      include: tofu
+      dest: $HOME/.local/bin
+      src: $HOME/Downloads/tofu_1.12.2_linux_amd64.zip
