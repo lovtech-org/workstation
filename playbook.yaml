@@ -43,6 +43,7 @@
        - tree
        - syncthingtray-kde-plasma
        - restic
+       - apprise
 
    - name: Remove any packages that we'd rather have flatpaks of
      ansible.builtin.package:
